@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BetterBets</string>
+    <string name="action_logout">Logout</string>
+    <string name="facebook_app_id">1500705920204988</string>
+	<string name="get_started">To get started, log in using Facebook</string>
+		
+</resources>
