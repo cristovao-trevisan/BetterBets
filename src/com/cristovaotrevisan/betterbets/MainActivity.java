@@ -1,10 +1,35 @@
 package com.cristovaotrevisan.betterbets;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import com.facebook.Request;
+import com.facebook.Request.GraphUserCallback;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +37,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends FragmentActivity {
@@ -20,8 +44,17 @@ public class MainActivity extends FragmentActivity {
 	private static final int MENU = 1;
 	private static final int FRAGMENT_COUNT = MENU +1;
 	private boolean isResumed = false;
-
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
+	
+	private static final String getBetsUrl = "http://10.0.2.2:3000/api1/users/bet_info.json";
+	private static final String createBetUrl = "http://10.0.2.2:3000/api1/users/create_bet.json";
+	private DefaultHttpClient httpclient;
+	
+	private String userID;
+	private String userName;
+	private ArrayList<String> friendsIDs;
+	private Map<String, String> usersNames;
+	private ArrayList<Bet> userBets;
 	
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = 
@@ -36,6 +69,11 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    
+	    friendsIDs = new ArrayList<String>();
+	    usersNames = new HashMap<String, String>();
+	    userBets = new ArrayList<Bet>();
+	    httpclient = new DefaultHttpClient();
 	    
 	    uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
@@ -64,9 +102,6 @@ public class MainActivity extends FragmentActivity {
 	    Session session = Session.getActiveSession();
 
 	    if (session != null && session.isOpened()) {
-	        // if the session is already open,
-	        // try to show the selection fragment
-	        Log.i("DEBUG", session.getAccessToken());
 	        showFragment(MENU, false);
 	    } else {
 	        // otherwise present the LOGIN screen
@@ -108,17 +143,8 @@ public class MainActivity extends FragmentActivity {
         uiHelper.onSaveInstanceState(outState);
     }
     
-    public static void callFacebookLogout() {
-        Session session = Session.getActiveSession();
-        if (session != null) {
-            if (!session.isClosed()) {
-                session.closeAndClearTokenInformation();
-                //clear your preferences if saved
-            }
-        }
-    }
-    
     private void showFragment(int fragmentIndex, boolean addToBackStack) {
+    	if (fragmentIndex == MENU) {Log.i("DEBUG", "asdfasdfasdfa");getFacebookUserInfo();}
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
@@ -132,7 +158,6 @@ public class MainActivity extends FragmentActivity {
             transaction.addToBackStack(null);
         }
         transaction.commit();
-        Session session = Session.getActiveSession();
     }
     
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
@@ -156,5 +181,122 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
+    
+    private void getFacebookUserInfo(){
+    	Session session = Session.getActiveSession();
+    	if(session.isClosed()) return;
+    	Request request =  Request.newMeRequest(session, new GraphUserCallback() {   
+            public void onCompleted(GraphUser user, Response response) {                                
+                if (user != null) {
+                    userID = user.getId();
+                    userName = user.getName();
+                    if(userName == null) userName = user.getFirstName();
+                    if(userName == null) userName = "Me";
+                    usersNames.put(userID, userName);
+                    Log.i("DEBUG", userID);
+                    try {
+                    	friendsIDs.clear();
+                    	JSONArray friendsJSON =  ((JSONObject)response.getGraphObject().getProperty("friends")).getJSONArray("data");
+                    	for (int i=0; i< friendsJSON.length(); i++){
+                    		String s_id = friendsJSON.getJSONObject(i).getString("id");
+                    		friendsIDs.add(s_id);
+                    		usersNames.put(s_id, friendsJSON.getJSONObject(i).getString("name"));
+                    	}
+                    	getUserBetsFromServer();
+                    	Log.i("DEBUG", friendsIDs.toString());
+                    	Log.i("DEBUG", usersNames.toString());
+					} catch (JSONException e) {
+						Log.i("DEBUG", e.toString());
+					}
+                }
+            }
+        });
+    	Bundle params = new Bundle();
+    	params.putString("fields", "id,friends");
+        request.setParameters(params);
+        request.executeAsync();
+    	Log.i("DEBUG", session.getAccessToken());
+    }
+    
+    public void callFacebookLogout() {
+        Session session = Session.getActiveSession();
+        if (session != null) {
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        }
+    }
+    
+    public void getUserBetsFromServer() {
+    	Thread thread = new Thread(new Runnable(){
+    	    @Override
+    	    public void run() {
+    	        try {
+    	        	if (Session.getActiveSession().isOpened() && userID != null){
+			       		URI uri = URI.create(getBetsUrl+"?user="+userID);
+			       		if(uri == null) return;
+			       		HttpUriRequest request = new HttpGet(uri);
+			       		request.setHeader("Content-type", "application/json");
+		
+			       		HttpResponse response = null;
+			       		 
+			       		try {
+			       			response = httpclient.execute(request);
+			       		} catch (Exception e) {
+			       			 Log.i("DEBUG", e.toString());
+			       		}
+			       		
+			       		if (response == null) return;
+			       		BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+			       		StringBuilder builder = new StringBuilder();
+			       		for (String line = null; (line = reader.readLine()) != null;) {
+			       		    builder.append(line).append("\n");
+			       		}
+			       		JSONTokener tokener = new JSONTokener(builder.toString());
+			       		JSONArray json = new JSONArray(tokener);
+			       		
+			       		userBets.clear();
+			       		for (int i=0; i< json.length(); i++){
+			       		 	JSONObject objI = json.getJSONObject(i);
+			       		 	String daredUserID = objI.getString("dared_user_id");
+			       		 	Timestamp startDate =convertStringToTimestamp(objI.getString("start_date"));
+			       		 	Timestamp endDate = convertStringToTimestamp(objI.getString("end_date"));
+			       			String description = objI.getString("description");
+			       			String prize = objI.getString("prize");
+			       			String userUrl = objI.getString("user_url");
+			       			String daredUserUrl = objI.getString("dared_user_url");
+			       			userBets.add(new Bet(daredUserID, startDate, endDate, description, prize, userUrl, daredUserUrl));
+		            	}
+			      
+			       		((MenuFragment)fragments[MENU]).update(userBets);
+    	        	}
 
+    	        } catch (Exception e) {
+    	        	Log.i("DEBUG", e.toString());
+    	        }
+    	    }
+    	});
+
+    	thread.start();
+	}
+    
+    public String userNameForUserID(String s_id){
+    	return usersNames.get(s_id);
+    }
+    
+    @SuppressLint("SimpleDateFormat")
+	private Timestamp convertStringToTimestamp(String time){
+    	SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd hh:mm:ss");
+
+        java.util.Date parsedTimeStamp;
+		try {
+			parsedTimeStamp = (java.util.Date) dateFormat.parse(time);
+		} catch (ParseException e) {
+			return null;
+		}
+
+        return new Timestamp(parsedTimeStamp.getTime());
+    }
 }
