@@ -11,5 +11,12 @@
 	<string name="action_new_bet">New Bet</string>
 	<string name="details">Details</string>
 	<string name="error_player">Player Error</string>
-		
+	<string name="create_bet">Create Bet</string>
+	<string name="friend_points">Friend:</string>
+	<string name="description_points">Description:</string>
+	<string name="prize_points">Prize:</string>
+	<string name="start_date_points">Start date:</string>
+	<string name="end_date_points">End date:</string>
+	<string name="user_url_points">Your video link:</string>
+	<string name="dared_user_url_points">Friend video link:</string>
 </resources>

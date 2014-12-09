@@ -6,14 +6,17 @@
     android:background="@color/white">
     
     <TextView
-        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/my_bets"
         android:textColor="#555"
         android:textSize="40sp" />
-    
+    <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:layout_marginBottom="3dp"
+	    android:background="@android:color/darker_gray"/>
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"

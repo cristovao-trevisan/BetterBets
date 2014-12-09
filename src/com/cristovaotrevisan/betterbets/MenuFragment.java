@@ -2,24 +2,19 @@ package com.cristovaotrevisan.betterbets;
 
 import java.util.ArrayList;
 
-import android.R.anim;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MenuFragment extends Fragment {
@@ -41,7 +36,6 @@ public class MenuFragment extends Fragment {
 	    {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-				Log.i("DEBUG","Clicked");
 	        	((MainActivity)getActivity()).showDetails(position);
 				
 			}
@@ -71,7 +65,7 @@ public class MenuFragment extends Fragment {
 		for (int i=0; i<bets.size(); i++){
 			Bet bet = bets.get(i);
 			String id = bet.getDaredUserID();
-			betsArray.add(((MainActivity) getActivity()).userNameForUserID(id)+ " " + (new Integer(bet.getUserLikes())).toString() +"x"+ (new Integer(bet.getDaredUserLikes())).toString());
+			betsArray.add(((MainActivity) getActivity()).userNameForUserID(id)+ ": " + (new Integer(bet.getUserLikes())).toString() +" vs "+ (new Integer(bet.getDaredUserLikes())).toString());
 		}
 		listView.post(new Runnable() {                  
 		    @Override
@@ -96,7 +90,7 @@ public class MenuFragment extends Fragment {
         	((MainActivity) getActivity()).callFacebookLogout();
             return true;
         case R.id.action_new_bet:
-        	
+        	((MainActivity) getActivity()).showFragment(MainActivity.CREATE_BET, true);
         	return true;
         default:
             return super.onOptionsItemSelected(item);

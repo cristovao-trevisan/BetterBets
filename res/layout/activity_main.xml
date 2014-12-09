@@ -14,4 +14,8 @@
           android:id="@+id/login_fragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent" />
+    <fragment android:name="com.cristovaotrevisan.betterbets.CreateBetFragment"
+          android:id="@+id/create_bet_fragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
 </LinearLayout>

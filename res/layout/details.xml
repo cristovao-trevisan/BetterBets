@@ -11,13 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
         android:textColor="#555"
         android:textSize="15sp" />
     <View
 	    android:layout_width="fill_parent"
 	    android:layout_height="3dp"
-	    android:layout_marginBottom="1dp"
 	    android:background="@android:color/darker_gray"/>
     <TextView
         android:id="@+id/details_user_prize"
@@ -27,42 +25,30 @@
         android:textColor="#555"
         android:textSize="15sp" />
     <View
-    android:layout_width="fill_parent"
-    android:layout_height="3dp"
-    android:layout_marginBottom="3dp"
-    android:background="@android:color/darker_gray"/>
-    
-    <TextView
-        android:id="@+id/details_user_likes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:textColor="#555"
-        android:textSize="20sp" />
-
-  <fragment
-      android:name="com.google.android.youtube.player.YouTubePlayerFragment"
-      android:id="@+id/details_user_video"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"/>
-     <View
 	    android:layout_width="fill_parent"
 	    android:layout_height="3dp"
 	    android:layout_marginBottom="3dp"
 	    android:background="@android:color/darker_gray"/>
-    <TextView
-        android:id="@+id/details_dared_user_likes"
-        android:layout_width="wrap_content"
+    
+    <Button
+        android:id="@+id/details_user_likes"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:textColor="#555"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+    <Button
+        android:id="@+id/details_dared_user_likes"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
         android:textSize="20sp" />
 
-  <fragment
+  <com.google.android.youtube.player.YouTubePlayerView
+      android:layout_marginTop="5dp"
       android:name="com.google.android.youtube.player.YouTubePlayerFragment"
-      android:id="@+id/details_dared_user_video"
+      android:id="@+id/details_video"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"/>
 

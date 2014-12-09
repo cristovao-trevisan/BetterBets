@@ -45,6 +45,12 @@ public class Bet implements Parcelable {
 		readFromParcel(in);
 	}
 	
+	@Override
+	public String toString(){
+		return "[" +daredUserID+", "+daredUserName+", "+startDate.toString()+", "+endDate.toString()
+				+", "+description+", "+prize+", "+userUrl+", "+daredUserUrl+", "+userLikes+", "+daredUserLikes+ "]";
+	}
+	
 	public String getDaredUserID() {
 		return daredUserID;
 	}

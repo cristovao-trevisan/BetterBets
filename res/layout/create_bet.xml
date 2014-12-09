@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@color/white">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/create_bet"
+        android:textColor="#555"
+        android:textSize="40sp" />
+	 <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:layout_marginBottom="3dp"
+	    android:background="@android:color/darker_gray"/>
+	  <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/friend_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <Spinner
+		    android:id="@+id/create_friend_picker"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content" 
+		    android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+		 
+	 <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="@string/description_points"
+        android:textColor="#555"
+        android:layout_marginRight="5dp"
+        android:textSize="15sp" />
+	 <EditText
+	    android:singleLine="false"
+	    android:lines="5"
+	    android:id="@+id/create_description"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    android:background="@android:color/darker_gray"/>
+	 
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="1dp">
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/prize_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <EditText
+	     android:id="@+id/create_prize"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="1dp">
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/user_url_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <EditText
+	     android:id="@+id/create_user_url"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="1dp">
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/dared_user_url_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <EditText
+	     android:id="@+id/create_dared_user_url"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="1dp">
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/start_date_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <EditText
+	     android:id="@+id/create_start_date"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+	 
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="1dp">
+		 <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:text="@string/end_date_points"
+	        android:textColor="#555"
+	        android:layout_marginRight="5dp"
+	        android:textSize="15sp" />
+		 <EditText
+	     android:id="@+id/create_end_date"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:background="@android:color/darker_gray"/>
+	 </LinearLayout>
+
+	 <Button
+	     android:id="@+id/create_bet_button"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:layout_gravity="center"
+	     android:text="@string/create_bet" />
+
+</LinearLayout>

@@ -8,12 +8,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -42,21 +42,27 @@ import android.view.MenuItem;
 public class MainActivity extends FragmentActivity {
 	public static final int LOGIN = 0;
 	public static final int MENU = 1;
-	private static final int FRAGMENT_COUNT = MENU +1;
+	public static final int CREATE_BET = 2;
+	private static final int FRAGMENT_COUNT = CREATE_BET +1;
 	private boolean isResumed = false;
 	private boolean infoThreadRunning= false;
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 	
-	private static final String getBetsUrl = "http://10.0.2.2:3000/api1/users/bet_info.json";
-	private static final String createBetUrl = "http://10.0.2.2:3000/api1/users/create_bet.json";
+	public static final String getBetsUrl = "http://10.0.2.2:3000/api1/users/bet_info.json";
+	public static final String createBetUrl = "http://10.0.2.2:3000/api1/users/create_bet.json";
 	private DefaultHttpClient httpclient;
 	
 	private String userID;
+	public String getUserID(){
+		return userID;
+	}
 	private String userName;
 	private ArrayList<String> friendsIDs;
+	public ArrayList<String> getFriendsIDs(){
+		return friendsIDs;
+	}
 	private Map<String, String> usersNames;
 	private ArrayList<Bet> userBets;
-	private int detailsBet = -1;
 	
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = 
@@ -85,6 +91,7 @@ public class MainActivity extends FragmentActivity {
 	    FragmentManager fm = getSupportFragmentManager();
 	    fragments[LOGIN] = fm.findFragmentById(R.id.login_fragment);
 	    fragments[MENU] = fm.findFragmentById(R.id.menu_fragment);
+	    fragments[CREATE_BET] = fm.findFragmentById(R.id.create_bet_fragment);
 
 	    FragmentTransaction transaction = fm.beginTransaction();
 	    for(int i = 0; i < fragments.length; i++) {
@@ -150,6 +157,9 @@ public class MainActivity extends FragmentActivity {
     		((MenuFragment) fragments[MENU]).showLoading();
     		getUserInfo();
 		}
+    	else if (fragmentIndex == CREATE_BET){
+    		((CreateBetFragment) fragments[CREATE_BET]).updateFriends();
+    	}
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
@@ -200,7 +210,6 @@ public class MainActivity extends FragmentActivity {
                     if(userName == null) userName = user.getFirstName();
                     if(userName == null) userName = "Me";
                     usersNames.put(userID, userName);
-                    Log.i("DEBUG", userID);
                     try {
                     	friendsIDs.clear();
                     	JSONArray friendsJSON =  ((JSONObject)response.getGraphObject().getProperty("friends")).getJSONArray("data");
@@ -210,8 +219,6 @@ public class MainActivity extends FragmentActivity {
                     		usersNames.put(s_id, friendsJSON.getJSONObject(i).getString("name"));
                     	}
                     	getUserBetsFromServer();
-                    	Log.i("DEBUG", friendsIDs.toString());
-                    	Log.i("DEBUG", usersNames.toString());
 					} catch (JSONException e) {
 						Log.i("DEBUG", e.toString());
 					}
@@ -222,7 +229,6 @@ public class MainActivity extends FragmentActivity {
     	params.putString("fields", "id,friends");
         request.setParameters(params);
         request.executeAsync();
-    	Log.i("DEBUG", session.getAccessToken());
     }
     
     public void callFacebookLogout() {
@@ -294,6 +300,15 @@ public class MainActivity extends FragmentActivity {
     	return usersNames.get(s_id);
     }
     
+    public String userIDForUserName(String s_id){
+    	Iterator it = usersNames.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();
+            if (((String)pairs.getValue()).equals(s_id)) return (String) pairs.getKey();
+        }
+    	return null;
+    }
+    
     @SuppressLint("SimpleDateFormat")
 	public static Timestamp convertStringToTimestamp(String time){
     	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -333,7 +348,6 @@ public class MainActivity extends FragmentActivity {
 	   		}
 	   		JSONTokener tokener = new JSONTokener(builder.toString());
 	   		JSONObject json = new JSONObject(tokener);
-	   		Log.i("DEBUG", json.getJSONObject("data").getString("viewCount"));
 	   		return Integer.parseInt(json.getJSONObject("data").getString("viewCount"));
 		}
 		catch (Exception e) {}
@@ -346,4 +360,28 @@ public class MainActivity extends FragmentActivity {
 		intent.putExtra("Bet", userBets.get(position));
 		startActivity(intent);
     }
+    
+    public void createBet(final Bet bet){
+		Thread thread = new Thread(new Runnable(){
+    	    @Override
+    	    public void run() {
+		   		try {
+		   			URI uri = URI.create(createBetUrl+"?user="+userID+"&dared_user="+bet.getDaredUserID()
+		   					+"&facebook_token="+Session.getActiveSession().getAccessToken()+"&description="+bet.getDescription()+"&prize="+bet.getPrize()
+		   					+"&user_url="+bet.getUserUrl()+"&dared_user_url="+bet.getDaredUserUrl()+
+		   					"&start_date="+(new SimpleDateFormat("dd-MM-yyyy").format(bet.getStartDate()))
+		   					+"&end_date="+(new SimpleDateFormat("dd-MM-yyyy").format(bet.getEndDate())));
+		   			HttpUriRequest request = new HttpPost(uri);
+		   			request.setHeader("Content-type", "application/json");
+		   			
+		   			HttpResponse response = null;
+		   			DefaultHttpClient httpclient = new DefaultHttpClient();
+		   			response = httpclient.execute(request);
+		   		} catch (Exception e) {
+		   			 Log.i("DEBUG", e.toString());
+		   		}
+    	    }
+		});
+		thread.start();
+	}
 }
