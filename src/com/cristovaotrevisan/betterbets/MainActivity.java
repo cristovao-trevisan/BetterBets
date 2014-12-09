@@ -40,10 +40,11 @@ import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends FragmentActivity {
-	private static final int LOGIN = 0;
-	private static final int MENU = 1;
+	public static final int LOGIN = 0;
+	public static final int MENU = 1;
 	private static final int FRAGMENT_COUNT = MENU +1;
 	private boolean isResumed = false;
+	private boolean infoThreadRunning= false;
 	private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 	
 	private static final String getBetsUrl = "http://10.0.2.2:3000/api1/users/bet_info.json";
@@ -55,6 +56,7 @@ public class MainActivity extends FragmentActivity {
 	private ArrayList<String> friendsIDs;
 	private Map<String, String> usersNames;
 	private ArrayList<Bet> userBets;
+	private int detailsBet = -1;
 	
 	private UiLifecycleHelper uiHelper;
 	private Session.StatusCallback callback = 
@@ -143,8 +145,11 @@ public class MainActivity extends FragmentActivity {
         uiHelper.onSaveInstanceState(outState);
     }
     
-    private void showFragment(int fragmentIndex, boolean addToBackStack) {
-    	if (fragmentIndex == MENU) {Log.i("DEBUG", "asdfasdfasdfa");getFacebookUserInfo();}
+    public void showFragment(int fragmentIndex, boolean addToBackStack) {
+    	if (fragmentIndex == MENU) {
+    		((MenuFragment) fragments[MENU]).showLoading();
+    		getUserInfo();
+		}
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
@@ -182,9 +187,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
     
-    private void getFacebookUserInfo(){
+    public void getUserInfo(){
+    	if(infoThreadRunning) return;
     	Session session = Session.getActiveSession();
     	if(session.isClosed()) return;
+    	infoThreadRunning = true;
     	Request request =  Request.newMeRequest(session, new GraphUserCallback() {   
             public void onCompleted(GraphUser user, Response response) {                                
                 if (user != null) {
@@ -228,14 +235,13 @@ public class MainActivity extends FragmentActivity {
         }
     }
     
-    public void getUserBetsFromServer() {
+    private void getUserBetsFromServer() {
     	Thread thread = new Thread(new Runnable(){
     	    @Override
     	    public void run() {
     	        try {
     	        	if (Session.getActiveSession().isOpened() && userID != null){
 			       		URI uri = URI.create(getBetsUrl+"?user="+userID);
-			       		if(uri == null) return;
 			       		HttpUriRequest request = new HttpGet(uri);
 			       		request.setHeader("Content-type", "application/json");
 		
@@ -247,7 +253,6 @@ public class MainActivity extends FragmentActivity {
 			       			 Log.i("DEBUG", e.toString());
 			       		}
 			       		
-			       		if (response == null) return;
 			       		BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 			       		StringBuilder builder = new StringBuilder();
 			       		for (String line = null; (line = reader.readLine()) != null;) {
@@ -260,21 +265,25 @@ public class MainActivity extends FragmentActivity {
 			       		for (int i=0; i< json.length(); i++){
 			       		 	JSONObject objI = json.getJSONObject(i);
 			       		 	String daredUserID = objI.getString("dared_user_id");
+			       		 	String daredUserName = usersNames.get(daredUserID);
 			       		 	Timestamp startDate =convertStringToTimestamp(objI.getString("start_date"));
 			       		 	Timestamp endDate = convertStringToTimestamp(objI.getString("end_date"));
 			       			String description = objI.getString("description");
 			       			String prize = objI.getString("prize");
 			       			String userUrl = objI.getString("user_url");
 			       			String daredUserUrl = objI.getString("dared_user_url");
-			       			userBets.add(new Bet(daredUserID, startDate, endDate, description, prize, userUrl, daredUserUrl));
+			       			int userLikes = userVideoLikes(userUrl);
+			       			int daredUserLikes = userVideoLikes(daredUserUrl);
+			       			userBets.add(new Bet(daredUserID, daredUserName, startDate, endDate, description, prize, userUrl, daredUserUrl, userLikes, daredUserLikes));
 		            	}
-			      
+			       		
 			       		((MenuFragment)fragments[MENU]).update(userBets);
     	        	}
 
     	        } catch (Exception e) {
     	        	Log.i("DEBUG", e.toString());
     	        }
+    	        infoThreadRunning = false;
     	    }
     	});
 
@@ -286,9 +295,8 @@ public class MainActivity extends FragmentActivity {
     }
     
     @SuppressLint("SimpleDateFormat")
-	private Timestamp convertStringToTimestamp(String time){
-    	SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss");
+	public static Timestamp convertStringToTimestamp(String time){
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         java.util.Date parsedTimeStamp;
 		try {
@@ -298,5 +306,44 @@ public class MainActivity extends FragmentActivity {
 		}
 
         return new Timestamp(parsedTimeStamp.getTime());
+    }
+    
+    public static int userVideoLikes(String userUrl){
+		String finalUrl = "http://gdata.youtube.com/feeds/api/videos/"+userUrl+"?v=2&alt=jsonc";
+		try{
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			URI uri = URI.create(finalUrl);
+	   		if(uri == null) return -1;
+	   		HttpUriRequest request = new HttpGet(uri);
+	   		request.setHeader("Content-type", "application/json");
+	
+	   		HttpResponse response = null;
+	   		 
+	   		try {
+	   			response = httpclient.execute(request);
+	   		} catch (Exception e) {
+	   			 Log.i("DEBUG", e.toString());
+	   		}
+	   		
+	   		if (response == null) return -1;
+	   		BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+	   		StringBuilder builder = new StringBuilder();
+	   		for (String line = null; (line = reader.readLine()) != null;) {
+	   		    builder.append(line).append("\n");
+	   		}
+	   		JSONTokener tokener = new JSONTokener(builder.toString());
+	   		JSONObject json = new JSONObject(tokener);
+	   		Log.i("DEBUG", json.getJSONObject("data").getString("viewCount"));
+	   		return Integer.parseInt(json.getJSONObject("data").getString("viewCount"));
+		}
+		catch (Exception e) {}
+		return -1;
+	}
+    
+    public void showDetails(int position){
+		if(position < 0 || userBets==null || position > userBets.size()) return;
+		Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+		intent.putExtra("Bet", userBets.get(position));
+		startActivity(intent);
     }
 }

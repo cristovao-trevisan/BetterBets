@@ -7,5 +7,9 @@
 	<string name="get_started">To get started, log in using Facebook</string>
 	<string name="my_bets">My Bets</string>
 	<color name="white">#FFFFFF</color>
+	<string name="loading">Loading</string>
+	<string name="action_new_bet">New Bet</string>
+	<string name="details">Details</string>
+	<string name="error_player">Player Error</string>
 		
 </resources>

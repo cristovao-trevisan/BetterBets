@@ -1925,12 +1925,13 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f0b002a;
         public static final int action_bar_title=0x7f0b0029;
         public static final int action_context_bar=0x7f0b003d;
-        public static final int action_logout=0x7f0b006a;
+        public static final int action_logout=0x7f0b0071;
         public static final int action_menu_divider=0x7f0b0005;
         public static final int action_menu_presenter=0x7f0b0006;
         public static final int action_mode_bar=0x7f0b0039;
         public static final int action_mode_bar_stub=0x7f0b0038;
         public static final int action_mode_close_button=0x7f0b002b;
+        public static final int action_new_bet=0x7f0b0070;
         public static final int activity_chooser_view_content=0x7f0b002c;
         public static final int always=0x7f0b001f;
         public static final int beginning=0x7f0b0026;
@@ -1967,6 +1968,12 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f0b0064;
         public static final int decor_content_parent=0x7f0b003a;
         public static final int default_activity_button=0x7f0b002f;
+        public static final int details_dared_user_likes=0x7f0b006a;
+        public static final int details_dared_user_video=0x7f0b006b;
+        public static final int details_user_description=0x7f0b0066;
+        public static final int details_user_likes=0x7f0b0068;
+        public static final int details_user_prize=0x7f0b0067;
+        public static final int details_user_video=0x7f0b0069;
         public static final int dialog=0x7f0b0024;
         public static final int disableHome=0x7f0b0018;
         public static final int dropdown=0x7f0b0025;
@@ -1983,9 +1990,9 @@ containing a value of this type.
         public static final int large=0x7f0b0009;
         public static final int left=0x7f0b0013;
         public static final int listMode=0x7f0b0016;
-        public static final int listView1=0x7f0b0069;
+        public static final int listView1=0x7f0b006f;
         public static final int list_item=0x7f0b0030;
-        public static final int login_button=0x7f0b0068;
+        public static final int login_button=0x7f0b006e;
         public static final int login_fragment=0x7f0b004b;
         public static final int menu_fragment=0x7f0b004a;
         public static final int middle=0x7f0b0028;
@@ -1993,7 +2000,7 @@ containing a value of this type.
         public static final int none=0x7f0b001a;
         public static final int normal=0x7f0b000a;
         public static final int picker_subtitle=0x7f0b005b;
-        public static final int profile_name=0x7f0b0067;
+        public static final int profile_name=0x7f0b006d;
         public static final int progress_circular=0x7f0b0007;
         public static final int progress_horizontal=0x7f0b0008;
         public static final int radio=0x7f0b0036;
@@ -2013,7 +2020,7 @@ containing a value of this type.
         public static final int showHome=0x7f0b001c;
         public static final int showTitle=0x7f0b001d;
         public static final int small=0x7f0b000b;
-        public static final int splash_icon=0x7f0b0066;
+        public static final int splash_icon=0x7f0b006c;
         public static final int split_action_bar=0x7f0b0004;
         public static final int standard=0x7f0b000e;
         public static final int submit_area=0x7f0b0047;
@@ -2090,10 +2097,11 @@ containing a value of this type.
         public static final int com_facebook_search_bar_layout=0x7f030024;
         public static final int com_facebook_tooltip_bubble=0x7f030025;
         public static final int com_facebook_usersettingsfragment=0x7f030026;
-        public static final int login=0x7f030027;
-        public static final int menu=0x7f030028;
-        public static final int simple_text_view_item=0x7f030029;
-        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
+        public static final int details=0x7f030027;
+        public static final int login=0x7f030028;
+        public static final int menu=0x7f030029;
+        public static final int simple_text_view_item=0x7f03002a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002b;
     }
     public static final class menu {
         public static final int main=0x7f0c0000;
@@ -2156,6 +2164,7 @@ containing a value of this type.
          */
         public static final int abc_toolbar_collapse_description=0x7f070021;
         public static final int action_logout=0x7f07002e;
+        public static final int action_new_bet=0x7f070033;
         public static final int app_name=0x7f07002d;
         public static final int com_facebook_choose_friends=0x7f070011;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f070000;
@@ -2186,8 +2195,11 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_log_in_button=0x7f07000a;
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f07000b;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f07000c;
+        public static final int details=0x7f070034;
+        public static final int error_player=0x7f070035;
         public static final int facebook_app_id=0x7f07002f;
         public static final int get_started=0x7f070030;
+        public static final int loading=0x7f070032;
         public static final int my_bets=0x7f070031;
     }
     public static final class style {

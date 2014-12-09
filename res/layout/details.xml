@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white">
+    
+    <TextView
+        android:id="@+id/details_user_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="#555"
+        android:textSize="15sp" />
+    <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:layout_marginBottom="1dp"
+	    android:background="@android:color/darker_gray"/>
+    <TextView
+        android:id="@+id/details_user_prize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#555"
+        android:textSize="15sp" />
+    <View
+    android:layout_width="fill_parent"
+    android:layout_height="3dp"
+    android:layout_marginBottom="3dp"
+    android:background="@android:color/darker_gray"/>
+    
+    <TextView
+        android:id="@+id/details_user_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="#555"
+        android:textSize="20sp" />
+
+  <fragment
+      android:name="com.google.android.youtube.player.YouTubePlayerFragment"
+      android:id="@+id/details_user_video"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"/>
+     <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="3dp"
+	    android:layout_marginBottom="3dp"
+	    android:background="@android:color/darker_gray"/>
+    <TextView
+        android:id="@+id/details_dared_user_likes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="#555"
+        android:textSize="20sp" />
+
+  <fragment
+      android:name="com.google.android.youtube.player.YouTubePlayerFragment"
+      android:id="@+id/details_dared_user_video"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"/>
+
+</LinearLayout>

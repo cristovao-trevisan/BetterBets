@@ -1,7 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/action_new_bet"
+        android:title="@string/action_new_bet"/>
     <item
         android:id="@+id/action_logout"
         android:title="@string/action_logout"/>
-
 </menu>
